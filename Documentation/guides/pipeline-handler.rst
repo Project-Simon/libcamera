@@ -686,7 +686,7 @@ directory.
 For example, adding a Raspberry Pi vendor control file for the PiSP pipeline
 handler is done with the following mapping:
 
-.. code-block:: meson
+.. code-block:: console
 
    controls_map = {
       'controls': {

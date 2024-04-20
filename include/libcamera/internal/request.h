@@ -47,7 +47,7 @@ private:
 	friend std::ostream &operator<<(std::ostream &out, const Request &r);
 
 	void doCancelRequest();
-	void emitPrepareCompleted();
+	void sendPrepareCompleted();
 	void notifierActivated(FrameBuffer *buffer);
 	void timeout();
 

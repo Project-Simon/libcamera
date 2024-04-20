@@ -462,7 +462,7 @@ void IpaBase::prepareIsp(const PrepareParams &params)
 		reportMetadata(ipaContext);
 
 	/* Ready to push the input buffer into the ISP. */
-	prepareIspComplete.emit(params.buffers, stitchSwapBuffers_);
+	prepareIspComplete.send(params.buffers, stitchSwapBuffers_);
 }
 
 void IpaBase::processStats(const ProcessParams &params)
@@ -490,7 +490,7 @@ void IpaBase::processStats(const ProcessParams &params)
 		if (rpiMetadata.get("agc.status", agcStatus) == 0) {
 			ControlList ctrls(sensorCtrls_);
 			applyAGC(&agcStatus, ctrls);
-			setDelayedControls.emit(ctrls, ipaContext);
+			setDelayedControls.send(ctrls, ipaContext);
 			setCameraTimeoutValue();
 		}
 	}
@@ -502,7 +502,7 @@ void IpaBase::processStats(const ProcessParams &params)
 	if (!controller_.getHardwareConfig().statsInline)
 		reportMetadata(ipaContext);
 
-	processStatsComplete.emit(params.buffers);
+	processStatsComplete.send(params.buffers);
 }
 
 void IpaBase::setMode(const IPACameraSensorInfo &sensorInfo)
@@ -617,7 +617,7 @@ void IpaBase::setCameraTimeoutValue()
 	auto max = std::max_element(frameLengths_.begin(), frameLengths_.end());
 
 	if (*max != lastTimeout_) {
-		setCameraTimeout.emit(max->get<std::milli>());
+		setCameraTimeout.send(max->get<std::milli>());
 		lastTimeout_ = *max;
 	}
 }
@@ -1185,7 +1185,7 @@ void IpaBase::applyControls(const ControlList &controls)
 				if (af->setLensPosition(ctrl.second.get<float>(), &hwpos)) {
 					ControlList lensCtrls(lensCtrls_);
 					lensCtrls.set(V4L2_CID_FOCUS_ABSOLUTE, hwpos);
-					setLensControls.emit(lensCtrls);
+					setLensControls.send(lensCtrls);
 				}
 			} else {
 				LOG(IPARPI, Warning)
@@ -1425,7 +1425,7 @@ void IpaBase::reportMetadata(unsigned int ipaContext)
 			libcameraMetadata_.set(controls::HdrChannel, controls::HdrChannelNone);
 	}
 
-	metadataReady.emit(libcameraMetadata_);
+	metadataReady.send(libcameraMetadata_);
 }
 
 void IpaBase::applyFrameDurations(Duration minFrameDuration, Duration maxFrameDuration)
